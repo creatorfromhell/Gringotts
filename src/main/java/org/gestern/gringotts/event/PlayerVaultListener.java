@@ -11,7 +11,7 @@ import org.gestern.gringotts.accountholder.PlayerAccountHolder;
 import static org.gestern.gringotts.Language.LANG;
 import static org.gestern.gringotts.Permissions.CREATEVAULT_ADMIN;
 import static org.gestern.gringotts.Permissions.CREATEVAULT_PLAYER;
-import static org.gestern.gringotts.event.VaultCreationEvent.*;
+import static org.gestern.gringotts.event.VaultCreationEvent.Type;
 
 /**
  * This Vault listener handles vault creation events for player vaults.
@@ -20,6 +20,11 @@ import static org.gestern.gringotts.event.VaultCreationEvent.*;
  */
 public class PlayerVaultListener implements Listener {
 
+    /**
+     * Vault created.
+     *
+     * @param event the event
+     */
     @EventHandler
     public void vaultCreated(PlayerVaultCreationEvent event) {
         // some listener already claimed this event
@@ -32,8 +37,8 @@ public class PlayerVaultListener implements Listener {
             return;
         }
 
-        SignChangeEvent cause     = event.getCause();
-        String          ownername = cause.getLine(2);
+        SignChangeEvent cause = event.getCause();
+        String ownername = cause.getLine(2);
 
         Player player = cause.getPlayer();
 

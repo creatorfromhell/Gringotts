@@ -27,11 +27,19 @@ import static org.gestern.gringotts.api.TransactionResult.*;
  */
 public class GringottsAccount {
 
+    /**
+     * The Owner.
+     */
     public final AccountHolder owner;
     @SuppressWarnings("unused")
     private final Logger log = Gringotts.getInstance().getLogger();
     private final DAO dao = Gringotts.getInstance().getDao();
 
+    /**
+     * Instantiates a new Gringotts account.
+     *
+     * @param owner the owner
+     */
     public GringottsAccount(AccountHolder owner) {
         if (owner == null) {
             throw new IllegalArgumentException("Account owner cannot be null");
@@ -78,8 +86,8 @@ public class GringottsAccount {
 
         // order of combination is important, because chestInv/playerInv might have to run on main thread
         CompletableFuture<Long> f = chestInv
-                .thenCombine(playerInv, (c, p) -> c + p)
-                .thenCombine(cents, (b, c) -> b + c);
+                .thenCombine(playerInv, Long::sum)
+                .thenCombine(cents, Long::sum);
 
         return getTimeout(f);
     }

@@ -9,6 +9,9 @@ import static org.gestern.gringotts.Configuration.CONF;
 import static org.gestern.gringotts.api.TransactionResult.ERROR;
 import static org.gestern.gringotts.api.TransactionResult.SUCCESS;
 
+/**
+ * The type Gringotts transaction.
+ */
 public class GringottsTransaction implements Transaction {
 
     /**

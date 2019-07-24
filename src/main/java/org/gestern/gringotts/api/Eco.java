@@ -3,6 +3,9 @@ package org.gestern.gringotts.api;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * The interface Eco.
+ */
 public interface Eco {
 
     /**
@@ -72,7 +75,7 @@ public interface Eco {
     /**
      * Access a Towny town account with the given id.
      *
-     * @param id/name of a Towny town
+     * @param id /name of a Towny town
      * @return account for a Towny town
      */
     Account town(String id);

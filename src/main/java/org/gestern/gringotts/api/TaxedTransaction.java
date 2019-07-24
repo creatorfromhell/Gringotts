@@ -1,5 +1,8 @@
 package org.gestern.gringotts.api;
 
+/**
+ * The interface Taxed transaction.
+ */
 public interface TaxedTransaction extends Transaction {
 
     /**

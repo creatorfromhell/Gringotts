@@ -20,11 +20,14 @@ import static org.gestern.gringotts.Configuration.CONF;
 import static org.gestern.gringotts.api.TransactionResult.ERROR;
 import static org.gestern.gringotts.api.TransactionResult.SUCCESS;
 
+/**
+ * The type Gringotts eco.
+ */
 public class GringottsEco implements Eco {
 
-    private static final String               TAG_PLAYER    = "player";
-    private final        AccountHolderFactory accountOwners = Gringotts.getInstance().getAccountHolderFactory();
-    private final        DAO                  dao           = Gringotts.getInstance().getDao();
+    private static final String TAG_PLAYER = "player";
+    private final AccountHolderFactory accountOwners = Gringotts.getInstance().getAccountHolderFactory();
+    private final DAO dao = Gringotts.getInstance().getDao();
 
     @Override
     public Account account(String id) {
@@ -117,6 +120,12 @@ public class GringottsEco implements Eco {
         private final String type;
         private final String id;
 
+        /**
+         * Instantiates a new Invalid account.
+         *
+         * @param type the type
+         * @param id   the id
+         */
         InvalidAccount(String type, String id) {
             this.type = type;
             this.id = id;
@@ -223,8 +232,16 @@ public class GringottsEco implements Eco {
 
     private class ValidAccount implements Account {
 
+        /**
+         * The Acc.
+         */
         protected final GringottsAccount acc;
 
+        /**
+         * Instantiates a new Valid account.
+         *
+         * @param acc the acc
+         */
         public ValidAccount(GringottsAccount acc) {
             this.acc = acc;
         }
@@ -312,17 +329,22 @@ public class GringottsEco implements Eco {
 
     private class ValidPlayerAccount extends ValidAccount implements PlayerAccount {
 
+        /**
+         * Instantiates a new Valid player account.
+         *
+         * @param acc the acc
+         */
         public ValidPlayerAccount(GringottsAccount acc) {
             super(acc);
         }
 
         @Override
         public TransactionResult deposit(double value) {
-            PlayerAccountHolder owner           = (PlayerAccountHolder) acc.owner;
-            Player              player          = Bukkit.getPlayer(owner.getUUID());
-            AccountInventory    playerInventory = new AccountInventory(player.getInventory());
-            long                centValue       = CONF.getCurrency().centValue(value);
-            long                toDeposit       = playerInventory.remove(centValue);
+            PlayerAccountHolder owner = (PlayerAccountHolder) acc.owner;
+            Player player = Bukkit.getPlayer(owner.getUUID());
+            AccountInventory playerInventory = new AccountInventory(player.getInventory());
+            long centValue = CONF.getCurrency().centValue(value);
+            long toDeposit = playerInventory.remove(centValue);
 
             if (toDeposit > centValue) {
                 toDeposit -= playerInventory.add(toDeposit - centValue);
@@ -339,11 +361,11 @@ public class GringottsEco implements Eco {
 
         @Override
         public TransactionResult withdraw(double value) {
-            PlayerAccountHolder owner           = (PlayerAccountHolder) acc.owner;
-            Player              player          = Bukkit.getPlayer(owner.getUUID());
-            AccountInventory    playerInventory = new AccountInventory(player.getInventory());
-            long                centValue       = CONF.getCurrency().centValue(value);
-            TransactionResult   remove          = acc.remove(centValue);
+            PlayerAccountHolder owner = (PlayerAccountHolder) acc.owner;
+            Player player = Bukkit.getPlayer(owner.getUUID());
+            AccountInventory playerInventory = new AccountInventory(player.getInventory());
+            long centValue = CONF.getCurrency().centValue(value);
+            TransactionResult remove = acc.remove(centValue);
 
             if (remove == SUCCESS) {
                 long withdrawn = playerInventory.add(centValue);
@@ -357,9 +379,20 @@ public class GringottsEco implements Eco {
 
     private class Curr implements Currency {
 
+        /**
+         * The Gcurr.
+         */
         final GringottsCurrency gcurr;
-        final String            formatString; // TODO this should be configurable
+        /**
+         * The Format string.
+         */
+        final String formatString; // TODO this should be configurable
 
+        /**
+         * Instantiates a new Curr.
+         *
+         * @param curr the curr
+         */
         Curr(GringottsCurrency curr) {
             this.gcurr = curr;
             formatString = "%." + curr.getDigits() + "f %s";

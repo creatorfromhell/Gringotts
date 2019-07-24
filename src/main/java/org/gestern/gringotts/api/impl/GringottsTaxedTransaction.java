@@ -6,6 +6,9 @@ import org.gestern.gringotts.api.TransactionResult;
 
 import static org.gestern.gringotts.api.TransactionResult.SUCCESS;
 
+/**
+ * The type Gringotts taxed transaction.
+ */
 public class GringottsTaxedTransaction extends GringottsTransaction implements TaxedTransaction {
 
     /**

@@ -18,10 +18,20 @@ currency:
 
   # value of individual denominations. default: emerald: 1, emerald block: 9
   denominations:
-    - material: emerald
+    - material: "minecraft:emerald"
       value: 1
-    - material: emerald_block
+      meta:
+        custom_model_data: 2
+        lore: gringotts_approved
+        enchanges:
+          - "minecraft:looting": 0
+    - material: "minecraft:emerald_block"
       value: 9
+      meta:
+        custom_model_data: 1
+        lore: gringotts_approved
+        enchanges:
+          - "minecraft:looting": 0
 
 # tax on /money pay transactions
 transactiontax:

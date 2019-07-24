@@ -19,6 +19,11 @@ public class AccountInventory {
 
     private final Inventory inventory;
 
+    /**
+     * Instantiates a new Account inventory.
+     *
+     * @param inventory the inventory
+     */
     public AccountInventory(Inventory inventory) {
         this.inventory = inventory;
     }
@@ -29,8 +34,8 @@ public class AccountInventory {
      * @return current balance of this inventory in cents
      */
     public long balance() {
-        GringottsCurrency cur   = CONF.getCurrency();
-        long              count = 0;
+        GringottsCurrency cur = CONF.getCurrency();
+        long count = 0;
 
         for (ItemStack stack : inventory) {
             count += cur.value(stack);
@@ -53,9 +58,9 @@ public class AccountInventory {
         // try denominations from largest to smallest
         for (Denomination denom : CONF.getCurrency().getDenominations()) {
             if (denom.getValue() <= remaining) {
-                ItemStack stack          = new ItemStack(denom.getKey().type);
-                int       stacksize      = stack.getMaxStackSize();
-                long      denomItemCount = denom.getValue() > 0 ? remaining / denom.getValue() : 0;
+                ItemStack stack = new ItemStack(denom.getKey().type);
+                int stacksize = stack.getMaxStackSize();
+                long denomItemCount = denom.getValue() > 0 ? remaining / denom.getValue() : 0;
 
                 // add stacks in this denomination until stuff is returned
                 while (denomItemCount > 0) {
@@ -96,15 +101,15 @@ public class AccountInventory {
             return 0;
         }
 
-        GringottsCurrency cur       = CONF.getCurrency();
-        long              remaining = value;
+        GringottsCurrency cur = CONF.getCurrency();
+        long remaining = value;
 
         // try denominations from smallest to largest
         List<Denomination> denoms = cur.getDenominations();
         for (ListIterator<Denomination> it = denoms.listIterator(denoms.size()); it.hasPrevious(); ) {
-            Denomination denom     = it.previous();
-            ItemStack    stack     = new ItemStack(denom.getKey().type);
-            int          stacksize = stack.getMaxStackSize();
+            Denomination denom = it.previous();
+            ItemStack stack = new ItemStack(denom.getKey().type);
+            int stacksize = stack.getMaxStackSize();
 
             // take 1 more than necessary if it doesn't round. add the extra later
             long denomItemCount = (long) Math.ceil((double) remaining / denom.getValue());

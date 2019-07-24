@@ -15,57 +15,192 @@ import static org.gestern.gringotts.Util.translateColors;
  * @author Daenara (KanaYamamoto Q bukkit.org)
  */
 public enum Language {
+    /**
+     * Lang language.
+     */
     LANG;
-    //global
+    /**
+     * The Noperm.
+     */
+//global
     public String noperm;
+    /**
+     * The Player only.
+     */
     public String playerOnly;
+    /**
+     * The Balance.
+     */
     public String balance;
+    /**
+     * The Vault balance.
+     */
     public String vault_balance;
+    /**
+     * The Inv balance.
+     */
     public String inv_balance;
+    /**
+     * The Invalid account.
+     */
     public String invalid_account;
+    /**
+     * The Reload.
+     */
     public String reload;
-    //pay command
+    /**
+     * The Pay success tax.
+     */
+//pay command
     public String pay_success_tax;
+    /**
+     * The Pay success sender.
+     */
     public String pay_success_sender;
+    /**
+     * The Pay success target.
+     */
     public String pay_success_target;
+    /**
+     * The Pay insufficient funds.
+     */
     public String pay_insufficientFunds;
+    /**
+     * The Pay ins s sender.
+     */
     public String pay_insS_sender;
+    /**
+     * The Pay ins s target.
+     */
     public String pay_insS_target;
+    /**
+     * The Pay error.
+     */
     public String pay_error;
-    //deposit command
+    /**
+     * The Economy command.
+     */
+//economy command
+    public String economy_command;
+    /**
+     * The Vaults command.
+     */
+//vaults command
+    public String vaults_command;
+    /**
+     * The Deposit success.
+     */
+//deposit command
     public String deposit_success;
+    /**
+     * The Deposit error.
+     */
     public String deposit_error;
-    //withdraw command
+    /**
+     * The Withdraw success.
+     */
+//withdraw command
     public String withdraw_success;
+    /**
+     * The Withdraw error.
+     */
     public String withdraw_error;
-    //moneyadmin command
+    /**
+     * The Moneyadmin b.
+     */
+//moneyadmin command
     public String moneyadmin_b;
+    /**
+     * The Moneyadmin add sender.
+     */
     public String moneyadmin_add_sender;
+    /**
+     * The Moneyadmin add target.
+     */
     public String moneyadmin_add_target;
+    /**
+     * The Moneyadmin add error.
+     */
     public String moneyadmin_add_error;
+    /**
+     * The Moneyadmin rm sender.
+     */
     public String moneyadmin_rm_sender;
+    /**
+     * The Moneyadmin rm target.
+     */
     public String moneyadmin_rm_target;
+    /**
+     * The Moneyadmin rm error.
+     */
     public String moneyadmin_rm_error;
-    //gringotts vaults
+    /**
+     * The Vault created.
+     */
+//gringotts vaults
     public String vault_created;
+    /**
+     * The Vault error.
+     */
     public String vault_error;
+    /**
+     * The Vault no vault perm.
+     */
     public String vault_noVaultPerm;
-    //towny plugin
+    /**
+     * The Plugin towny no town vault perm.
+     */
+//towny plugin
     public String plugin_towny_noTownVaultPerm;
+    /**
+     * The Plugin towny no town resident.
+     */
     public String plugin_towny_noTownResident;
+    /**
+     * The Plugin towny no nation vault perm.
+     */
     public String plugin_towny_noNationVaultPerm;
+    /**
+     * The Plugin towny not in nation.
+     */
     public String plugin_towny_notInNation;
-    //faction plugin
+    /**
+     * The Plugin faction no vault perm.
+     */
+//faction plugin
     public String plugin_faction_noVaultPerm;
+    /**
+     * The Plugin faction not in faction.
+     */
     public String plugin_faction_notInFaction;
-    //worldguard plugin
+    /**
+     * The Plugin worldguard no vault perm.
+     */
+//worldguard plugin
     public String plugin_worldguard_noVaultPerm;
-    //vault plugin
+    /**
+     * The Plugin vault insufficient funds.
+     */
+//vault plugin
     public String plugin_vault_insufficientFunds;
+    /**
+     * The Plugin vault insufficient space.
+     */
     public String plugin_vault_insufficientSpace;
+    /**
+     * The Plugin vault error.
+     */
     public String plugin_vault_error;
+    /**
+     * The Plugin vault not implemented.
+     */
     public String plugin_vault_notImplemented;
 
+    /**
+     * Read language.
+     *
+     * @param savedLanguage the saved language
+     */
     public void readLanguage(FileConfiguration savedLanguage) {
         ClosuresWouldBeCoolNow translator = new ClosuresWouldBeCoolNow(savedLanguage);
 
@@ -205,6 +340,16 @@ public enum Language {
         LANG.plugin_vault_notImplemented = translator.read(
                 "plugins.vault.notImplemented",
                 "Gringotts does not support banks");
+
+        // economy command
+        LANG.economy_command = translator.read(
+                "economy_command",
+                "The total balance of the server is %balance.");
+
+        // vaults command
+        LANG.vaults_command = translator.read(
+                "vaults_command",
+                "The total number of vaults in the server is %balance");
     }
 
     /**

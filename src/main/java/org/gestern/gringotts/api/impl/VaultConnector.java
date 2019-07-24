@@ -23,6 +23,9 @@ public class VaultConnector implements Economy {
 
     private final Eco eco = Gringotts.getInstance().getEco();
 
+    /**
+     * Instantiates a new Vault connector.
+     */
     public VaultConnector() {}
 
 

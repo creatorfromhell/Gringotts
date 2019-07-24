@@ -1,5 +1,8 @@
 package org.gestern.gringotts.api;
 
+/**
+ * The interface Transaction.
+ */
 public interface Transaction {
 
     /**

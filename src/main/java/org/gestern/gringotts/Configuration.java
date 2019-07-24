@@ -32,7 +32,7 @@ public enum Configuration {
      * Regular expression defining what patterns on a sign will create a valid vault. Subpattern 1 denotes the type
      * of the vault.
      */
-    // TODO make this actually configurable(?)
+// TODO make this actually configurable(?)
     public final String vaultPattern = "[^\\[]*\\[(\\w*) ?vault\\]";
     private final Logger log = Gringotts.getInstance().getLogger();
     /**
@@ -51,10 +51,19 @@ public enum Configuration {
     /**
      * Amount of non-physical money to give to new players
      */
-    // An alternative to flooding new players' inventories with currency items
+// An alternative to flooding new players' inventories with currency items
     public long startBalancePlayer = 0;
+    /**
+     * The Start balance faction.
+     */
     public long startBalanceFaction = 0;
+    /**
+     * The Start balance town.
+     */
     public long startBalanceTown = 0;
+    /**
+     * The Start balance nation.
+     */
     public long startBalanceNation = 0;
     /**
      * Use container vaults (chest, dispenser, furnace).
@@ -319,6 +328,8 @@ public enum Configuration {
 
     /**
      * Currency configuration.
+     *
+     * @return the currency
      */
     public GringottsCurrency getCurrency() {
         return currency;

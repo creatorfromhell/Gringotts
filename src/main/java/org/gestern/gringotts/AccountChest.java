@@ -23,13 +23,13 @@ public class AccountChest {
     /**
      * Sign marking the chest as an account chest.
      */
-    public final Sign             sign;
+    public final Sign sign;
     /**
      * Account this chest belongs to.
      */
     public final GringottsAccount account;
     private final Logger log = Gringotts.getInstance().getLogger();
-    private final DAO    dao = Gringotts.getInstance().getDao();
+    private final DAO dao = Gringotts.getInstance().getDao();
 
     /**
      * Create Account chest based on a sign marking its position and belonging to an account.
@@ -135,6 +135,7 @@ public class AccountChest {
      * If the amount is larger than available space, the space is filled and the actually
      * added amount returned.
      *
+     * @param value the value
      * @return amount actually added
      */
     public long add(long value) {
@@ -189,7 +190,7 @@ public class AccountChest {
 
         // TODO refactor: common definition of valid vault types
         String[] lines = sign.getLines();
-        String   line0 = lines[0].toLowerCase();
+        String line0 = lines[0].toLowerCase();
 
         if (!line0.matches(CONF.vaultPattern)) {
             return true;
@@ -233,9 +234,9 @@ public class AccountChest {
         }
 
         if (inv instanceof DoubleChestInventory) {
-            DoubleChestInventory dinv  = (DoubleChestInventory) inv;
-            Chest                left  = (Chest) (dinv.getLeftSide().getHolder());
-            Chest                right = (Chest) (dinv.getRightSide().getHolder());
+            DoubleChestInventory dinv = (DoubleChestInventory) inv;
+            Chest left = (Chest) (dinv.getLeftSide().getHolder());
+            Chest right = (Chest) (dinv.getRightSide().getHolder());
 
             return new Chest[]{left, right};
         } else {
@@ -254,8 +255,8 @@ public class AccountChest {
      */
     @Override
     public int hashCode() {
-        final int prime  = 31;
-        int       result = 1;
+        final int prime = 31;
+        int result = 1;
 
         result = prime * result + sign.getLocation().hashCode();
 
@@ -323,6 +324,11 @@ public class AccountChest {
         return false;
     }
 
+    /**
+     * Gets account.
+     *
+     * @return the account
+     */
     public GringottsAccount getAccount() {
         return account;
     }

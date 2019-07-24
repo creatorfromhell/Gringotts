@@ -12,10 +12,27 @@ public class PlayerVaultCreationEvent extends VaultCreationEvent {
 
     private final SignChangeEvent cause;
 
+    /**
+     * Instantiates a new Player vault creation event.
+     *
+     * @param type  the type
+     * @param cause the cause
+     */
     public PlayerVaultCreationEvent(Type type, SignChangeEvent cause) {
         super(type);
 
         this.cause = cause;
+    }
+
+    /**
+     * Gets handler list.
+     *
+     * @return the handler list
+     */
+    public static HandlerList getHandlerList() {
+        return VaultCreationEvent.handlers;
+        // TODO ensure we can actually have superclass handle these safely
+        // TODO find out what I meant by that?
     }
 
     /**
@@ -25,12 +42,6 @@ public class PlayerVaultCreationEvent extends VaultCreationEvent {
      */
     public SignChangeEvent getCause() {
         return cause;
-    }
-
-    public static HandlerList getHandlerList() {
-        return VaultCreationEvent.handlers;
-        // TODO ensure we can actually have superclass handle these safely
-        // TODO find out what I meant by that?
     }
 
 }

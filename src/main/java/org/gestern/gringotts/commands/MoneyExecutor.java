@@ -15,13 +15,16 @@ public class MoneyExecutor extends GringottsAbstractExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(LANG.playerOnly);
+
             return false;
         }
+
         Player player = (Player) sender;
 
         if (args.length == 0) {
             // same as balance
             sendBalanceMessage(eco.player(player.getUniqueId()));
+
             return true;
         }
 
@@ -44,10 +47,11 @@ public class MoneyExecutor extends GringottsAbstractExecutor {
 
                 return true;
             }
-        } else if ( args.length == 3 && "pay".equals(command)) {
+        } else if (args.length == 3 && "pay".equals(command)) {
             // money pay <amount> <player>
             return pay(player, value, args);
         }
+
         return false;
     }
 }

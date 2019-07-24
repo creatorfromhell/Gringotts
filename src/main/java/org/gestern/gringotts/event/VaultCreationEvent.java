@@ -17,6 +17,9 @@ import org.gestern.gringotts.accountholder.AccountHolder;
  */
 public class VaultCreationEvent extends Event {
 
+    /**
+     * The constant handlers.
+     */
     protected static final HandlerList handlers = new HandlerList();
 
     private final Type type;
@@ -32,20 +35,21 @@ public class VaultCreationEvent extends Event {
         this.type = type;
     }
 
-    public enum Type {
-        PLAYER,
-        FACTION,
-        TOWN,
-        NATION,
-        REGION
-
-    }
-
+    /**
+     * Gets handler list.
+     *
+     * @return the handler list
+     */
     @SuppressWarnings("unused")
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
+    /**
+     * Gets type.
+     *
+     * @return the type
+     */
     public Type getType() {
         return type;
     }
@@ -101,5 +105,32 @@ public class VaultCreationEvent extends Event {
     @Override
     public HandlerList getHandlers() {
         return handlers;
+    }
+
+    /**
+     * The enum Type.
+     */
+    public enum Type {
+        /**
+         * Player type.
+         */
+        PLAYER,
+        /**
+         * Faction type.
+         */
+        FACTION,
+        /**
+         * Town type.
+         */
+        TOWN,
+        /**
+         * Nation type.
+         */
+        NATION,
+        /**
+         * Region type.
+         */
+        REGION
+
     }
 }

@@ -23,15 +23,17 @@ import java.util.logging.Logger;
  */
 public class Migration {
 
-    private final EbeanServer db  = Gringotts.getInstance().getDatabase();
-    private final Logger      log = Gringotts.getInstance().getLogger();
+    private final EbeanServer db = Gringotts.getInstance().getDatabase();
+    private final Logger log = Gringotts.getInstance().getLogger();
 
-    private final File gringottsFolder   = Gringotts.getInstance().getDataFolder();
+    private final File gringottsFolder = Gringotts.getInstance().getDataFolder();
     private final File derbyMigratedFlag = new File(gringottsFolder, ".derby-migrated");
     private final File uuidsMigratedFlag = new File(Gringotts.getInstance().getDataFolder(), ".uuids-migrated");
 
     /**
      * Return whether the legacy derby db has been migrated to bukkit built-in sqlite / ebean.
+     *
+     * @return the boolean
      */
     public boolean isDerbyMigrated() {
         return derbyMigratedFlag.exists();
@@ -39,6 +41,8 @@ public class Migration {
 
     /**
      * Return whether player names have been migrated to uuids.
+     *
+     * @return the boolean
      */
     public boolean isUUIDMigrated() {
         // use a special file as marker that uuids have been migrated
@@ -50,7 +54,7 @@ public class Migration {
      */
     public void doUUIDMigration() {
         // create backup copy of Gringotts.db
-        File dbFile   = new File(gringottsFolder, "Gringotts.db");
+        File dbFile = new File(gringottsFolder, "Gringotts.db");
         File dbBackup = new File(gringottsFolder, "Gringotts.db.bak");
 
         if (dbFile.exists() && !dbBackup.exists()) {
@@ -66,7 +70,7 @@ public class Migration {
 
         // only players need to be updated
         List<EBeanAccount> accounts = db.find(EBeanAccount.class).where().eq("type", "player").findList();
-        List<String>       names    = new LinkedList<>();
+        List<String> names = new LinkedList<>();
 
         for (EBeanAccount account : accounts) {
             String owner = account.getOwner();
@@ -124,12 +128,15 @@ public class Migration {
 
     /**
      * Migrate an existing Derby DB to Bukkit-internal EBean.
+     *
+     * @param derbyDAO the derby dao
+     * @param eBeanDAO the e bean dao
      */
     public void doDerbyMigration(DerbyDAO derbyDAO, EBeanDAO eBeanDAO) {
         log.info("Reading account data from Derby database ...");
 
-        List<DerbyDAO.DerbyAccount>      accounts = derbyDAO.getAccountsRaw();
-        List<DerbyDAO.DerbyAccountChest> chests   = derbyDAO.getChestsRaw();
+        List<DerbyDAO.DerbyAccount> accounts = derbyDAO.getAccountsRaw();
+        List<DerbyDAO.DerbyAccountChest> chests = derbyDAO.getChestsRaw();
 
         db.beginTransaction();
         for (DerbyDAO.DerbyAccount da : accounts) {

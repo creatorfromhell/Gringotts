@@ -21,9 +21,21 @@ public enum Dependency {
      */
     DEP;
 
-    public final FactionsHandler   factions;
-    public final TownyHandler      towny;
+    /**
+     * The Factions.
+     */
+    public final FactionsHandler factions;
+    /**
+     * The Towny.
+     */
+    public final TownyHandler towny;
+    /**
+     * The Vault.
+     */
     public final DependencyHandler vault;
+    /**
+     * The Worldguard.
+     */
     public final WorldGuardHandler worldguard;
     private final Logger log = Gringotts.getInstance().getLogger();
 
@@ -43,11 +55,11 @@ public enum Dependency {
         vault = new GenericHandler(hookPlugin(
                 "Vault",
                 "net.milkbowl.vault.Vault",
-                "1.5.0"));
+                "1.7.3"));
         worldguard = WorldGuardHandler.getWorldGuardHandler(hookPlugin(
                 "WorldGuard",
                 "com.sk89q.worldguard.bukkit.WorldGuardPlugin",
-                "6.2"));
+                "7.0.1"));
     }
 
     /**
@@ -89,8 +101,8 @@ public enum Dependency {
 
             log.info("Plugin " + name + " hooked.");
 
-            PluginDescriptionFile desc    = plugin.getDescription();
-            String                version = desc.getVersion();
+            PluginDescriptionFile desc = plugin.getDescription();
+            String version = desc.getVersion();
 
             if (!versionAtLeast(version, minVersion)) {
                 log.warning("Plugin dependency " + name + " is version " + version +

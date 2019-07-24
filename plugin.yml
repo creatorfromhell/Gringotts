@@ -26,14 +26,16 @@ commands:
     description: Money actions
     usage: |
       /money
-      /money pay <amount> <player>
+      /money pay <player> <amount>
   moneyadmin:
     aliases: [moneyadm, mad]
     description: Gringotts admin actions
     usage: |
-      /moneyadm add <amount> <player>
-      /moneyadm rm <amount> <player>
-      /moneyadm b <player>
+      /moneyadm add <player> <amount>
+      /moneyadm remove <player> <amount>
+      /moneyadm balance <player>
+      /moneyadm economy
+      /moneyadm vaults
     permission: gringotts.admin
   gringotts:
     aliases: [grin]

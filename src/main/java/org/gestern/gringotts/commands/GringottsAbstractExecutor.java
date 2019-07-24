@@ -13,20 +13,50 @@ import static org.gestern.gringotts.Permissions.COMMAND_DEPOSIT;
 import static org.gestern.gringotts.Permissions.COMMAND_WITHDRAW;
 import static org.gestern.gringotts.api.TransactionResult.SUCCESS;
 
+/**
+ * The type Gringotts abstract executor.
+ */
 public abstract class GringottsAbstractExecutor implements CommandExecutor {
+    /**
+     * The Tag balance.
+     */
     static final String TAG_BALANCE = "%balance";
-
+    /**
+     * The Tag player.
+     */
     static final String TAG_PLAYER = "%player";
-
+    /**
+     * The Tag value.
+     */
     static final String TAG_VALUE = "%value";
 
+    /**
+     * The Plugin.
+     */
     final Gringotts plugin = Gringotts.getInstance();
+    /**
+     * The Eco.
+     */
     final Eco eco = plugin.getEco();
 
+    /**
+     * Send invalid account message.
+     *
+     * @param sender      the sender
+     * @param accountName the account name
+     */
     static void sendInvalidAccountMessage(CommandSender sender, String accountName) {
         sender.sendMessage(LANG.invalid_account.replace(TAG_PLAYER, accountName));
     }
 
+    /**
+     * Pay boolean.
+     *
+     * @param player the player
+     * @param value  the value
+     * @param args   the args
+     * @return the boolean
+     */
     boolean pay(Player player, double value, String[] args) {
         if (!Permissions.TRANSFER.allowed(player)) {
             player.sendMessage(LANG.noperm);
@@ -82,6 +112,12 @@ public abstract class GringottsAbstractExecutor implements CommandExecutor {
         }
     }
 
+    /**
+     * Deposit.
+     *
+     * @param player the player
+     * @param value  the value
+     */
     void deposit(Player player, double value) {
 
         if (COMMAND_DEPOSIT.allowed(player)) {
@@ -98,6 +134,12 @@ public abstract class GringottsAbstractExecutor implements CommandExecutor {
         }
     }
 
+    /**
+     * Withdraw.
+     *
+     * @param player the player
+     * @param value  the value
+     */
     void withdraw(Player player, double value) {
         if (COMMAND_WITHDRAW.allowed(player)) {
             TransactionResult result = eco.player(player.getUniqueId()).withdraw(value);
@@ -112,6 +154,11 @@ public abstract class GringottsAbstractExecutor implements CommandExecutor {
         }
     }
 
+    /**
+     * Send balance message.
+     *
+     * @param account the account
+     */
     void sendBalanceMessage(Account account) {
 
         account.message(LANG.balance.replace(TAG_BALANCE, eco.currency().format(account.balance())));

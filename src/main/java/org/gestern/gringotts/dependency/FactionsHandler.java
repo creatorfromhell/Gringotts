@@ -23,6 +23,9 @@ import static org.gestern.gringotts.Permissions.CREATEVAULT_ADMIN;
 import static org.gestern.gringotts.Permissions.CREATEVAULT_FACTION;
 import static org.gestern.gringotts.dependency.Dependency.DEP;
 
+/**
+ * The type Factions handler.
+ */
 public abstract class FactionsHandler implements DependencyHandler, AccountHolderProvider {
     /**
      * Get a valid Factions handler if the plugin instance is valid. Otherwise get a fake one.
@@ -44,11 +47,26 @@ public abstract class FactionsHandler implements DependencyHandler, AccountHolde
         }
     }
 
+    /**
+     * Gets faction account holder.
+     *
+     * @param player the player
+     * @return the faction account holder
+     */
     public abstract FactionAccountHolder getFactionAccountHolder(Player player);
 
+    /**
+     * Gets account holder by id.
+     *
+     * @param id the id
+     * @return the account holder by id
+     */
     public abstract FactionAccountHolder getAccountHolderById(String id);
 }
 
+/**
+ * The type Invalid factions handler.
+ */
 class InvalidFactionsHandler extends FactionsHandler {
 
     @Override
@@ -98,10 +116,18 @@ class InvalidFactionsHandler extends FactionsHandler {
     }
 }
 
+/**
+ * The type Valid factions handler.
+ */
 class ValidFactionsHandler extends FactionsHandler {
 
     private final Factions plugin;
 
+    /**
+     * Instantiates a new Valid factions handler.
+     *
+     * @param plugin the plugin
+     */
     public ValidFactionsHandler(Factions plugin) {
         this.plugin = plugin;
 
@@ -205,8 +231,16 @@ class ValidFactionsHandler extends FactionsHandler {
     }
 }
 
+/**
+ * The type Factions listener.
+ */
 class FactionsListener implements Listener {
 
+    /**
+     * Vault created.
+     *
+     * @param event the event
+     */
     @EventHandler
     public void vaultCreated(PlayerVaultCreationEvent event) {
         // some listener already claimed this event
@@ -250,6 +284,9 @@ class FactionsListener implements Listener {
     }
 }
 
+/**
+ * The type Faction account holder.
+ */
 class FactionAccountHolder implements AccountHolder {
 
     private static final String TAG_FACTION = "faction";
@@ -257,11 +294,18 @@ class FactionAccountHolder implements AccountHolder {
 
     /**
      * Default ctor.
+     *
+     * @param owner the owner
      */
     public FactionAccountHolder(Faction owner) {
         this.owner = owner;
     }
 
+    /**
+     * Instantiates a new Faction account holder.
+     *
+     * @param id the id
+     */
     public FactionAccountHolder(String id) {
         Faction faction = FactionColl.get().getFixed(id);
 
@@ -284,8 +328,8 @@ class FactionAccountHolder implements AccountHolder {
 
     @Override
     public int hashCode() {
-        final int prime  = 31;
-        int       result = 1;
+        final int prime = 31;
+        int result = 1;
 
         result = prime * result + ((owner == null) ? 0 : owner.getId().hashCode());
 

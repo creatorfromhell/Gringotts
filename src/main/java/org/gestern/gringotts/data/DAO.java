@@ -7,6 +7,9 @@ import org.gestern.gringotts.accountholder.AccountHolder;
 
 import java.util.List;
 
+/**
+ * The interface Dao.
+ */
 public interface DAO {
     /**
      * Save an account chest to database.

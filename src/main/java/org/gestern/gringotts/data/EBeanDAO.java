@@ -22,12 +22,20 @@ import java.util.logging.Logger;
 
 import static org.gestern.gringotts.Configuration.CONF;
 
+/**
+ * The type E bean dao.
+ */
 public class EBeanDAO implements DAO {
 
     private static EBeanDAO dao;
-    private final EbeanServer db  = Gringotts.getInstance().getDatabase();
-    private final Logger      log = Gringotts.getInstance().getLogger();
+    private final EbeanServer db = Gringotts.getInstance().getDatabase();
+    private final Logger log = Gringotts.getInstance().getLogger();
 
+    /**
+     * Gets dao.
+     *
+     * @return the dao
+     */
     public static EBeanDAO getDao() {
         if (dao != null) {
             return dao;
@@ -40,6 +48,8 @@ public class EBeanDAO implements DAO {
 
     /**
      * The classes comprising the DB model, required for the EBean DDL ("data description language").
+     *
+     * @return the database classes
      */
     public static List<Class<?>> getDatabaseClasses() {
         return Arrays.asList(EBeanAccount.class, EBeanAccountChest.class);
@@ -83,7 +93,7 @@ public class EBeanDAO implements DAO {
         // TODO this is business logic and should probably be outside of the DAO implementation.
         // also find a more elegant way of handling different account types
         double startValue = 0;
-        String type       = account.owner.getType();
+        String type = account.owner.getType();
 
         switch (type) {
             case "player":
@@ -127,18 +137,18 @@ public class EBeanDAO implements DAO {
 
         for (SqlRow c : result) {
             String worldName = c.getString("world");
-            int    x         = c.getInteger("x");
-            int    y         = c.getInteger("y");
-            int    z         = c.getInteger("z");
+            int x = c.getInteger("x");
+            int y = c.getInteger("y");
+            int z = c.getInteger("z");
 
-            String type    = c.getString("type");
+            String type = c.getString("type");
             String ownerId = c.getString("owner");
 
             World world = Bukkit.getWorld(worldName);
             if (world == null) continue; // skip vaults in non-existing worlds
 
-            Location loc       = new Location(world, x, y, z);
-            Block    signBlock = loc.getBlock();
+            Location loc = new Location(world, x, y, z);
+            Block signBlock = loc.getBlock();
             if (Util.isSignBlock(signBlock)) {
                 AccountHolder owner = Gringotts.getInstance().getAccountHolderFactory().get(type, ownerId);
                 if (owner == null) {
@@ -148,7 +158,7 @@ public class EBeanDAO implements DAO {
                             .getZ());
                 } else {
                     GringottsAccount ownerAccount = new GringottsAccount(owner);
-                    Sign             sign         = (Sign) signBlock.getState();
+                    Sign sign = (Sign) signBlock.getState();
                     chests.add(new AccountChest(sign, ownerAccount));
                 }
             } else {
@@ -185,9 +195,9 @@ public class EBeanDAO implements DAO {
         List<AccountChest> chests = new LinkedList<>();
         for (SqlRow result : getChests.findSet()) {
             String worldName = result.getString("world");
-            int    x         = result.getInteger("x");
-            int    y         = result.getInteger("y");
-            int    z         = result.getInteger("z");
+            int x = result.getInteger("x");
+            int y = result.getInteger("y");
+            int z = result.getInteger("z");
 
             World world = Bukkit.getWorld(worldName);
 
@@ -195,8 +205,8 @@ public class EBeanDAO implements DAO {
                 continue; // skip chest if it is in non-existent world
             }
 
-            Location loc       = new Location(world, x, y, z);
-            Block    signBlock = loc.getBlock();
+            Location loc = new Location(world, x, y, z);
+            Block signBlock = loc.getBlock();
 
             if (Util.isSignBlock(signBlock)) {
                 Sign sign = (Sign) loc.getBlock().getState();

@@ -1,5 +1,8 @@
 package org.gestern.gringotts.api;
 
+/**
+ * The interface Bank account.
+ */
 public interface BankAccount extends Account {
 
     /**

@@ -1,7 +1,7 @@
 Gringotts Changelog
 ===================
 
-v2.11
+v2.11.2
 ---
 ###### Upcoming
 * The first out of Snapshot version after a long long time.
@@ -17,6 +17,10 @@ v2.11
 * ! Custom item texture by NBT Tag 'Item Texture'. Idea by [jeannen](https://www.spigotmc.org/members/jeannen.44475/) on spigot.org
 * ! Configurable tag name for the vault signs. Example: [\<name\>]. Idea by [mc_tech](https://www.spigotmc.org/members/mc_tech.587361/) on spigot.org
 * Better support of UUID system.
+* Update support of WorldGuard and WorldEdit to their latest version.
+* Added new command, moneyadmin economy, that allows to admins can see the total economy of the server.
+* Added statistics.csv file for the economy progress of your server.
+* Added support for tab complete command system.
 > Yes, version 2.10 got skipped, like Apple skipped iPhone 9.
 
 v2.11.1-SNAPSHOT

@@ -26,7 +26,16 @@ import static org.gestern.gringotts.Language.LANG;
 import static org.gestern.gringotts.Permissions.CREATEVAULT_ADMIN;
 import static org.gestern.gringotts.Permissions.CREATEVAULT_WORLDGUARD;
 
+/**
+ * The type World guard handler.
+ */
 public abstract class WorldGuardHandler implements DependencyHandler, AccountHolderProvider {
+    /**
+     * Gets world guard handler.
+     *
+     * @param plugin the plugin
+     * @return the world guard handler
+     */
     public static WorldGuardHandler getWorldGuardHandler(Plugin plugin) {
         if (plugin instanceof WorldGuardPlugin) {
             return new ValidWorldGuardHandler((WorldGuardPlugin) plugin);
@@ -36,6 +45,9 @@ public abstract class WorldGuardHandler implements DependencyHandler, AccountHol
     }
 }
 
+/**
+ * The type Invalid world guard handler.
+ */
 class InvalidWorldGuardHandler extends WorldGuardHandler {
     @Override
     public AccountHolder getAccountHolder(String id) {
@@ -75,10 +87,18 @@ class InvalidWorldGuardHandler extends WorldGuardHandler {
     }
 }
 
+/**
+ * The type Valid world guard handler.
+ */
 class ValidWorldGuardHandler extends WorldGuardHandler {
 
     private WorldGuardPlugin plugin;
 
+    /**
+     * Instantiates a new Valid world guard handler.
+     *
+     * @param plugin the plugin
+     */
     public ValidWorldGuardHandler(WorldGuardPlugin plugin) {
         this.plugin = plugin;
 
@@ -182,8 +202,16 @@ class ValidWorldGuardHandler extends WorldGuardHandler {
         return null;
     }
 
+    /**
+     * The type World guard listener.
+     */
     public class WorldGuardListener implements Listener {
 
+        /**
+         * Vault created.
+         *
+         * @param event the event
+         */
         @EventHandler
         public void vaultCreated(PlayerVaultCreationEvent event) {
             // some listener already claimed this event
@@ -222,11 +250,26 @@ class ValidWorldGuardHandler extends WorldGuardHandler {
     }
 }
 
+/**
+ * The type World guard account holder.
+ */
 class WorldGuardAccountHolder implements AccountHolder {
 
+    /**
+     * The World.
+     */
     final String world;
+    /**
+     * The Region.
+     */
     final ProtectedRegion region;
 
+    /**
+     * Instantiates a new World guard account holder.
+     *
+     * @param world  the world
+     * @param region the region
+     */
     public WorldGuardAccountHolder(String world, ProtectedRegion region) {
         this.world = world;
         this.region = region;

@@ -14,6 +14,9 @@ import org.gestern.gringotts.accountholder.AccountHolder;
 
 import static org.gestern.gringotts.Language.LANG;
 
+/**
+ * The type Vault creator.
+ */
 public class VaultCreator implements Listener {
 
     private final Accounting accounting = Gringotts.getInstance().getAccounting();

@@ -30,6 +30,14 @@ public class Denomination implements Comparable<Denomination> {
     private final String unitNamePlural;
 
 
+    /**
+     * Instantiates a new Denomination.
+     *
+     * @param key            the key
+     * @param value          the value
+     * @param unitName       the unit name
+     * @param unitNamePlural the unit name plural
+     */
     public Denomination(DenominationKey key, long value, String unitName, String unitNamePlural) {
         this.key = key;
         this.value = value;
@@ -51,6 +59,8 @@ public class Denomination implements Comparable<Denomination> {
 
     /**
      * Identification information for this denomination.
+     *
+     * @return the key
      */
     public DenominationKey getKey() {
         return key;
@@ -58,6 +68,8 @@ public class Denomination implements Comparable<Denomination> {
 
     /**
      * Value of one unit of this denomination in cents.
+     *
+     * @return the value
      */
     public long getValue() {
         return value;
@@ -66,6 +78,8 @@ public class Denomination implements Comparable<Denomination> {
     /**
      * The name of a single unit of this denomination. The unit name is determined by explicit configuration,
      * configured displayName, or default item name (in this order).
+     *
+     * @return the unit name
      */
     public String getUnitName() {
         return unitName;
@@ -74,6 +88,8 @@ public class Denomination implements Comparable<Denomination> {
     /**
      * The name for units of this denomination (plural). The unit name is determined by explicit configuration,
      * configured displayName, or default item name (in this order).
+     *
+     * @return the unit name plural
      */
     public String getUnitNamePlural() {
         return unitNamePlural;

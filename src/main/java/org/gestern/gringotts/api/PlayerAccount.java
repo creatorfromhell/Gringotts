@@ -1,5 +1,8 @@
 package org.gestern.gringotts.api;
 
+/**
+ * The interface Player account.
+ */
 public interface PlayerAccount extends Account {
 
     /**

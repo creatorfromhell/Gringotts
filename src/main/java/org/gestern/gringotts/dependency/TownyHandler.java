@@ -21,6 +21,9 @@ import static org.gestern.gringotts.Permissions.*;
 import static org.gestern.gringotts.dependency.Dependency.DEP;
 import static org.gestern.gringotts.event.VaultCreationEvent.Type;
 
+/**
+ * The type Towny handler.
+ */
 public abstract class TownyHandler implements DependencyHandler {
     /**
      * Get a valid towny handler if the plugin instance is valid. Otherwise get a fake one.
@@ -38,10 +41,28 @@ public abstract class TownyHandler implements DependencyHandler {
         }
     }
 
+    /**
+     * Gets town account holder.
+     *
+     * @param player the player
+     * @return the town account holder
+     */
     public abstract TownyAccountHolder getTownAccountHolder(Player player);
 
+    /**
+     * Gets nation account holder.
+     *
+     * @param player the player
+     * @return the nation account holder
+     */
     public abstract TownyAccountHolder getNationAccountHolder(Player player);
 
+    /**
+     * Gets account holder by account name.
+     *
+     * @param name the name
+     * @return the account holder by account name
+     */
     public abstract TownyAccountHolder getAccountHolderByAccountName(String name);
 }
 
@@ -79,12 +100,20 @@ class InvalidTownyHandler extends TownyHandler {
 
 }
 
+/**
+ * The type Valid towny handler.
+ */
 class ValidTownyHandler extends TownyHandler implements AccountHolderProvider {
 
     private static final String TAG_TOWN = "town";
     private static final String TAG_NATION = "nation";
     private final Towny plugin;
 
+    /**
+     * Instantiates a new Valid towny handler.
+     *
+     * @param plugin the plugin
+     */
     public ValidTownyHandler(Towny plugin) {
         this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(new TownyListener(), Gringotts.getInstance());
@@ -202,8 +231,16 @@ class ValidTownyHandler extends TownyHandler implements AccountHolderProvider {
     }
 }
 
+/**
+ * The type Towny listener.
+ */
 class TownyListener implements Listener {
 
+    /**
+     * Vault created.
+     *
+     * @param event the event
+     */
     @EventHandler
     public void vaultCreated(PlayerVaultCreationEvent event) {
         // some listener already claimed this event
@@ -271,11 +308,26 @@ class TownyListener implements Listener {
     }
 }
 
+/**
+ * The type Towny account holder.
+ */
 class TownyAccountHolder implements AccountHolder {
 
+    /**
+     * The Owner.
+     */
     public final TownyEconomyObject owner;
+    /**
+     * The Type.
+     */
     public final String type;
 
+    /**
+     * Instantiates a new Towny account holder.
+     *
+     * @param owner the owner
+     * @param type  the type
+     */
     public TownyAccountHolder(TownyEconomyObject owner, String type) {
         this.owner = owner;
         this.type = type;

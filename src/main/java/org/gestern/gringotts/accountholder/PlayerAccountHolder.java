@@ -5,6 +5,9 @@ import org.bukkit.OfflinePlayer;
 import java.util.UUID;
 
 
+/**
+ * The type Player account holder.
+ */
 public class PlayerAccountHolder implements AccountHolder {
 
     /**
@@ -12,6 +15,11 @@ public class PlayerAccountHolder implements AccountHolder {
      */
     public final OfflinePlayer accountHolder;
 
+    /**
+     * Instantiates a new Player account holder.
+     *
+     * @param player the player
+     */
     public PlayerAccountHolder(OfflinePlayer player) {
         if (player != null)
             this.accountHolder = player;
@@ -75,6 +83,11 @@ public class PlayerAccountHolder implements AccountHolder {
         return accountHolder.getUniqueId().toString();
     }
 
+    /**
+     * Gets uuid.
+     *
+     * @return the uuid
+     */
     public UUID getUUID() {
         return accountHolder.getUniqueId();
     }

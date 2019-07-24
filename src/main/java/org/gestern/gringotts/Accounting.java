@@ -56,8 +56,7 @@ public class Accounting {
      * Save an AccountChest to Account association.
      *
      * @param chest chest to add to the account
-     * @return false if the specified AccountChest is already registered or would be connected to
-     * a registered chest. true if the association was successful.
+     * @return false if the specified AccountChest is already registered or would be connected to a registered chest. true if the association was successful.
      * @throws GringottsStorageException when saving of account chest failed
      */
     public boolean addChest(AccountChest chest) {

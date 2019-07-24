@@ -13,7 +13,7 @@ import org.apache.commons.lang.Validate;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
@@ -37,11 +37,12 @@ import org.gestern.gringotts.event.AccountListener;
 import org.gestern.gringotts.event.PlayerVaultListener;
 import org.gestern.gringotts.event.VaultCreator;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,9 @@ import static org.gestern.gringotts.Language.LANG;
 import static org.gestern.gringotts.dependency.Dependency.DEP;
 
 
+/**
+ * The type Gringotts.
+ */
 public class Gringotts extends JavaPlugin {
 
     private static final String MESSAGES_YML = "messages.yml";
@@ -62,6 +66,9 @@ public class Gringotts extends JavaPlugin {
     private EbeanServer ebean;
     private Eco eco;
 
+    /**
+     * Instantiates a new Gringotts.
+     */
     public Gringotts() {
         ServerConfig dbConfig = new ServerConfig();
 
@@ -85,6 +92,8 @@ public class Gringotts extends JavaPlugin {
 
     /**
      * The Gringotts plugin instance.
+     *
+     * @return the instance
      */
     public static Gringotts getInstance() {
         return instance;
@@ -131,14 +140,9 @@ public class Gringotts extends JavaPlugin {
                 int returned = 0;
 
                 for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-                    if (player.isOp()) {
-                        continue;
-                    }
+                    double balance = this.eco.player(player.getUniqueId()).balance();
 
-                    AccountHolder holder = accountHolderFactory.get(player);
-                    GringottsAccount account = accounting.getAccount(holder);
-
-                    returned += account.getBalance();
+                    returned += balance;
                 }
 
                 return returned;
@@ -160,6 +164,34 @@ public class Gringotts extends JavaPlugin {
 
                 return returned;
             }));
+
+            Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+                Path test = Paths.get(getDataFolder().toString(), "statistics.csv");
+
+                if (!Files.exists(test)) {
+                    try {
+                        Files.write(test, "Time, Value".getBytes(), StandardOpenOption.CREATE);
+                    } catch (IOException e) {
+                        getLogger().throwing(
+                                getClass().getCanonicalName(),
+                                "Bukkit.getScheduler().runTaskTimerAsynchronously",
+                                e
+                        );
+
+                        return;
+                    }
+                }
+
+                try {
+                    Files.write(test, "\n2019-07-16T12:42:10.433Z,4.57222209452977".getBytes(), StandardOpenOption.WRITE);
+                } catch (IOException e) {
+                    getLogger().throwing(
+                            getClass().getCanonicalName(),
+                            "Bukkit.getScheduler().runTaskTimerAsynchronously",
+                            e
+                    );
+                }
+            }, 1, 20 * 60 * 5);
         } catch (GringottsStorageException | GringottsConfigurationException e) {
             getLogger().severe(e.getMessage());
             this.disable();
@@ -193,13 +225,17 @@ public class Gringotts extends JavaPlugin {
     }
 
     private void registerCommands() {
-        CommandExecutor playerCommands = new MoneyExecutor();
-        CommandExecutor moneyAdminCommands = new MoneyadminExecutor();
-        CommandExecutor adminCommands = new GringottsExecutor();
+        MoneyExecutor playerCommands = new MoneyExecutor();
+        MoneyadminExecutor moneyAdminCommands = new MoneyadminExecutor();
+        GringottsExecutor adminCommands = new GringottsExecutor();
 
         getCommand("balance").setExecutor(playerCommands);
         getCommand("money").setExecutor(playerCommands);
-        getCommand("moneyadmin").setExecutor(moneyAdminCommands);
+
+        PluginCommand moneyadminCommand = getCommand("moneyadmin");
+        moneyadminCommand.setExecutor(moneyAdminCommands);
+        moneyadminCommand.setTabCompleter(moneyAdminCommands);
+
         getCommand("gringotts").setExecutor(adminCommands);
     }
 
@@ -304,6 +340,11 @@ public class Gringotts extends JavaPlugin {
         return EBeanDAO.getDao();
     }
 
+    /**
+     * Gets database classes.
+     *
+     * @return the database classes
+     */
     public List<Class<?>> getDatabaseClasses() {
         return EBeanDAO.getDatabaseClasses();
     }
@@ -337,14 +378,15 @@ public class Gringotts extends JavaPlugin {
      * href="https://github.com/Bukkit/HomeBukkit">Bukkit's Homebukkit Plugin
      * </a></i>
      *
-     * @return ebean server instance or null if not enabled
-     * all EBean related methods has been removed with Minecraft 1.12
-     * - see https://www.spigotmc.org/threads/194144/
+     * @return ebean server instance or null if not enabled all EBean related methods has been removed with Minecraft 1.12 - see https://www.spigotmc.org/threads/194144/
      */
     public EbeanServer getDatabase() {
         return ebean;
     }
 
+    /**
+     * Install ddl.
+     */
     protected void installDDL() {
         SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
         DdlGenerator gen = serv.getDdlGenerator();
@@ -352,6 +394,9 @@ public class Gringotts extends JavaPlugin {
         gen.runScript(false, gen.generateCreateDdl());
     }
 
+    /**
+     * Remove ddl.
+     */
     protected void removeDDL() {
         SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
         DdlGenerator gen = serv.getDdlGenerator();
@@ -370,6 +415,11 @@ public class Gringotts extends JavaPlugin {
         return input;
     }
 
+    /**
+     * Configure db config.
+     *
+     * @param config the config
+     */
     public void configureDbConfig(ServerConfig config) {
         Validate.notNull(config, "Config cannot be null");
 
@@ -388,12 +438,19 @@ public class Gringotts extends JavaPlugin {
         config.setDataSourceConfig(ds);
     }
 
+    /**
+     * Gets dao.
+     *
+     * @return the dao
+     */
     public DAO getDao() {
         return dao;
     }
 
     /**
      * The account holder factory is the place to go if you need an AccountHolder instance for an id.
+     *
+     * @return the account holder factory
      */
     public AccountHolderFactory getAccountHolderFactory() {
         return accountHolderFactory;
@@ -401,11 +458,18 @@ public class Gringotts extends JavaPlugin {
 
     /**
      * Manages accounts.
+     *
+     * @return the accounting
      */
     public Accounting getAccounting() {
         return accounting;
     }
 
+    /**
+     * Gets eco.
+     *
+     * @return the eco
+     */
     public Eco getEco() {
         return eco;
     }

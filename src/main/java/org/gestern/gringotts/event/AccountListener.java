@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.gestern.gringotts.Configuration.CONF;
-import static org.gestern.gringotts.event.VaultCreationEvent.*;
+import static org.gestern.gringotts.event.VaultCreationEvent.Type;
 
 /**
  * Listens for chest creation and destruction events.

@@ -16,6 +16,9 @@ public class AccountHolderFactory {
 
     private final Map<String, AccountHolderProvider> accountHolderProviders = new LinkedHashMap<>();
 
+    /**
+     * Instantiates a new Account holder factory.
+     */
     public AccountHolderFactory() {
         // linked HashMap maintains iteration order -> prefer player to be checked first
         accountHolderProviders.put("player", new PlayerAccountHolderProvider());
@@ -63,7 +66,7 @@ public class AccountHolderFactory {
     /**
      * Get an account holder with automatically determined type, based on the owner's id.
      *
-     * @param uuid the user id
+     * @param player the player
      * @return account holder for the given owner name, or null if none could be determined
      */
     public AccountHolder get(OfflinePlayer player) {
@@ -83,8 +86,7 @@ public class AccountHolderFactory {
      *
      * @param type  type of the account
      * @param owner name of the account holder
-     * @return account holder of given type with given owner name, or null if none could be determined or type is not
-     * supported.
+     * @return account holder of given type with given owner name, or null if none could be determined or type is not supported.
      */
     public AccountHolder get(String type, String owner) {
         AccountHolderProvider provider = accountHolderProviders.get(type);
@@ -97,6 +99,12 @@ public class AccountHolderFactory {
         return accountHolder;
     }
 
+    /**
+     * Register account holder provider.
+     *
+     * @param type     the type
+     * @param provider the provider
+     */
     public void registerAccountHolderProvider(String type, AccountHolderProvider provider) {
         accountHolderProviders.put(type, provider);
     }

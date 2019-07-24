@@ -9,6 +9,9 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.WallSign;
 import org.gestern.gringotts.currency.GringottsCurrency;
 
+/**
+ * The type Util.
+ */
 @SuppressWarnings("WeakerAccess")
 public class Util {
 
@@ -144,6 +147,12 @@ public class Util {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
 
+    /**
+     * Reform material name string.
+     *
+     * @param material the material
+     * @return the string
+     */
     public static String reformMaterialName(Material material) {
         String name = material.name();
         String[] words = name.split("_");

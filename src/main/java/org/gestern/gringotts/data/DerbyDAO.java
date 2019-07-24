@@ -29,13 +29,13 @@ public class DerbyDAO implements DAO {
      */
     private static DerbyDAO dao;
     private final Logger log = Gringotts.getInstance().getLogger();
-    private final Driver            driver;
+    private final Driver driver;
     /**
      * Full connection string for database, without connect options.
      */
-    private final String            dbString;
-    private       Connection        connection;
-    private       PreparedStatement storeAccountChest,
+    private final String dbString;
+    private Connection connection;
+    private PreparedStatement storeAccountChest,
             destroyAccountChest,
             storeAccount,
             getAccount,
@@ -109,8 +109,8 @@ public class DerbyDAO implements DAO {
                             "type varchar(64), owner varchar(64), cents int not null, " +
                             "primary key (id), constraint unique_type_owner unique(type, owner))";
 
-            Statement stmt    = connection.createStatement();
-            int       updated = stmt.executeUpdate(createAccount);
+            Statement stmt = connection.createStatement();
+            int updated = stmt.executeUpdate(createAccount);
 
             if (updated > 0) {
                 log.info("created table ACCOUNT");
@@ -128,8 +128,8 @@ public class DerbyDAO implements DAO {
                             "primary key(id), constraint unique_location unique(world,x,y,z), constraint fk_account " +
                             "foreign key(account) references account(id))";
 
-            Statement stmt    = connection.createStatement();
-            int       updated = stmt.executeUpdate(createAccountChest);
+            Statement stmt = connection.createStatement();
+            int updated = stmt.executeUpdate(createAccountChest);
 
             if (updated > 0) {
                 log.info("created table ACCOUNTCHEST");
@@ -184,7 +184,7 @@ public class DerbyDAO implements DAO {
     @Override
     public synchronized boolean storeAccountChest(AccountChest chest) {
         GringottsAccount account = chest.getAccount();
-        Location         loc     = chest.sign.getLocation();
+        Location loc = chest.sign.getLocation();
 
         log.info("storing account chest: " + chest + " for account: " + account);
 
@@ -261,7 +261,7 @@ public class DerbyDAO implements DAO {
             // TODO this is business logic and should probably be outside of the DAO implementation.
             // also find a more elegant way of handling different account types
             double value = 0;
-            String type  = account.owner.getType();
+            String type = account.owner.getType();
 
             switch (type) {
                 case "player":
@@ -323,18 +323,18 @@ public class DerbyDAO implements DAO {
     public synchronized List<DerbyAccount> getAccountsRaw() {
 
         List<DerbyAccount> accounts = new LinkedList<>();
-        Statement          stmt     = null;
-        ResultSet          result   = null;
+        Statement stmt = null;
+        ResultSet result = null;
         try {
             checkConnection();
             stmt = connection.createStatement();
             result = stmt.executeQuery("select * from account");
 
             while (result.next()) {
-                int    id    = result.getInt("id");
-                String type  = result.getString("type");
+                int id = result.getInt("id");
+                String type = result.getString("type");
                 String owner = result.getString("owner");
-                long   cents = result.getLong("cents");
+                long cents = result.getLong("cents");
                 accounts.add(new DerbyAccount(id, type, owner, cents));
             }
 
@@ -359,24 +359,24 @@ public class DerbyDAO implements DAO {
     /**
      * Migration method: Get all accountchest raw data.
      *
-     * @return ...
+     * @return ... chests raw
      */
     public synchronized List<DerbyAccountChest> getChestsRaw() {
         List<DerbyAccountChest> chests = new LinkedList<>();
-        Statement               stmt   = null;
-        ResultSet               result = null;
+        Statement stmt = null;
+        ResultSet result = null;
         try {
             checkConnection();
             stmt = connection.createStatement();
             result = stmt.executeQuery("select * from accountchest");
 
             while (result.next()) {
-                int    id      = result.getInt("id");
-                String world   = result.getString("world");
-                int    x       = result.getInt("x");
-                int    y       = result.getInt("y");
-                int    z       = result.getInt("z");
-                int    account = result.getInt("account");
+                int id = result.getInt("id");
+                String world = result.getString("world");
+                int x = result.getInt("x");
+                int y = result.getInt("y");
+                int z = result.getInt("z");
+                int account = result.getInt("account");
 
                 chests.add(new DerbyAccountChest(id, world, x, y, z, account));
             }
@@ -406,7 +406,7 @@ public class DerbyDAO implements DAO {
     @Override
     public synchronized List<AccountChest> getChests() {
         List<AccountChest> chests = new LinkedList<>();
-        ResultSet          result = null;
+        ResultSet result = null;
         try {
             checkConnection();
 
@@ -414,15 +414,15 @@ public class DerbyDAO implements DAO {
 
             while (result.next()) {
                 String worldName = result.getString("world");
-                int    x         = result.getInt("x");
-                int    y         = result.getInt("y");
-                int    z         = result.getInt("z");
+                int x = result.getInt("x");
+                int y = result.getInt("y");
+                int z = result.getInt("z");
 
-                String type    = result.getString("type");
+                String type = result.getString("type");
                 String ownerId = result.getString("owner");
 
-                World    world = Bukkit.getWorld(worldName);
-                Location loc   = new Location(world, x, y, z);
+                World world = Bukkit.getWorld(worldName);
+                Location loc = new Location(world, x, y, z);
 
                 if (world == null) {
                     Gringotts.getInstance().getLogger().warning(
@@ -448,7 +448,7 @@ public class DerbyDAO implements DAO {
                                 signBlock.getZ());
                     } else {
                         GringottsAccount ownerAccount = new GringottsAccount(owner);
-                        Sign             sign         = (Sign) signBlock.getState();
+                        Sign sign = (Sign) signBlock.getState();
                         chests.add(new AccountChest(sign, ownerAccount));
                     }
                 } else {
@@ -478,9 +478,9 @@ public class DerbyDAO implements DAO {
      */
     @Override
     public synchronized List<AccountChest> getChests(GringottsAccount account) {
-        AccountHolder      owner  = account.owner;
+        AccountHolder owner = account.owner;
         List<AccountChest> chests = new LinkedList<>();
-        ResultSet          result = null;
+        ResultSet result = null;
 
         try {
             checkConnection();
@@ -491,12 +491,12 @@ public class DerbyDAO implements DAO {
 
             while (result.next()) {
                 String worldName = result.getString("world");
-                int    x         = result.getInt("x");
-                int    y         = result.getInt("y");
-                int    z         = result.getInt("z");
+                int x = result.getInt("x");
+                int y = result.getInt("y");
+                int z = result.getInt("z");
 
-                World    world = Bukkit.getWorld(worldName);
-                Location loc   = new Location(world, x, y, z);
+                World world = Bukkit.getWorld(worldName);
+                Location loc = new Location(world, x, y, z);
 
                 if (world == null) {
                     deleteAccountChest(worldName, x, y, x); // FIXME: Isn't actually removing the non-existent vaults..
@@ -626,11 +626,31 @@ public class DerbyDAO implements DAO {
      * Utility class to support migration of Derby database.
      */
     public static class DerbyAccount {
-        public final int    id;
+        /**
+         * The Id.
+         */
+        public final int id;
+        /**
+         * The Type.
+         */
         public final String type;
+        /**
+         * The Owner.
+         */
         public final String owner;
-        public final long   cents;
+        /**
+         * The Cents.
+         */
+        public final long cents;
 
+        /**
+         * Instantiates a new Derby account.
+         *
+         * @param id    the id
+         * @param type  the type
+         * @param owner the owner
+         * @param cents the cents
+         */
         public DerbyAccount(int id, String type, String owner, long cents) {
             this.id = id;
             this.type = type;
@@ -639,12 +659,43 @@ public class DerbyDAO implements DAO {
         }
     }
 
+    /**
+     * The type Derby account chest.
+     */
     public static class DerbyAccountChest {
-        public final int    id;
+        /**
+         * The Id.
+         */
+        public final int id;
+        /**
+         * The World.
+         */
         public final String world;
-        public final int    x, y, z;
+        /**
+         * The X.
+         */
+        public final int x, /**
+         * The Y.
+         */
+        y, /**
+         * The Z.
+         */
+        z;
+        /**
+         * The Account.
+         */
         public final int account;
 
+        /**
+         * Instantiates a new Derby account chest.
+         *
+         * @param id      the id
+         * @param world   the world
+         * @param x       the x
+         * @param y       the y
+         * @param z       the z
+         * @param account the account
+         */
         public DerbyAccountChest(int id, String world, int x, int y, int z, int account) {
             this.id = id;
             this.world = world;
