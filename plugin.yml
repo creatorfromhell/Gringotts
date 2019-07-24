@@ -19,13 +19,18 @@ loadbefore: [Vault]
 commands:
   balance:
     description: Shows your vault balance
-    usage: /balance
-    aliases: money
+    usage: |
+      /balance
+      /balance withdraw <amount>
+      /balance deposit <amount>
+      /balance pay <player> <amount>
   money:
-    aliases: [money, m]
+    aliases: [m]
     description: Money actions
     usage: |
       /money
+      /money withdraw <amount>
+      /money deposit <amount>
       /money pay <player> <amount>
   moneyadmin:
     aliases: [moneyadm, mad]

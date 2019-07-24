@@ -46,6 +46,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.gestern.gringotts.Configuration.CONF;
 import static org.gestern.gringotts.Language.LANG;
@@ -70,24 +71,7 @@ public class Gringotts extends JavaPlugin {
      * Instantiates a new Gringotts.
      */
     public Gringotts() {
-        ServerConfig dbConfig = new ServerConfig();
-
-        dbConfig.setDefaultServer(false);
-        dbConfig.setRegister(false);
-        dbConfig.setClasses(getDatabaseClasses());
-        dbConfig.setName(getDescription().getName());
-        configureDbConfig(dbConfig);
-
-        DataSourceConfig dsConfig = dbConfig.getDataSourceConfig();
-
-        dsConfig.setUrl(replaceDatabaseString(dsConfig.getUrl()));
-        getDataFolder().mkdirs();
-
-        ClassLoader previous = Thread.currentThread().getContextClassLoader();
-
-        Thread.currentThread().setContextClassLoader(getClassLoader());
-        ebean = EbeanServerFactory.create(dbConfig);
-        Thread.currentThread().setContextClassLoader(previous);
+        instance = this;
     }
 
     /**
@@ -99,10 +83,48 @@ public class Gringotts extends JavaPlugin {
         return instance;
     }
 
+    /**
+     * Called after a plugin is loaded but before it has been enabled.
+     * <p>
+     * When multiple plugins are loaded, the onLoad() for all plugins is
+     * called before any onEnable() is called.
+     */
+    @Override
+    public void onLoad() {
+        ServerConfig dbConfig = new ServerConfig();
+
+        dbConfig.setDefaultServer(false);
+        dbConfig.setRegister(false);
+        dbConfig.setClasses(getDatabaseClasses());
+        dbConfig.setName(getDescription().getName());
+        configureDbConfig(dbConfig);
+
+        DataSourceConfig dsConfig = dbConfig.getDataSourceConfig();
+
+        dsConfig.setUrl(replaceDatabaseString(dsConfig.getUrl()));
+
+        try {
+            Files.createDirectories(getDataFolder().toPath());
+        } catch (IOException e) {
+            getLogger().throwing(getClass().getCanonicalName(), "Gringotts()", e);
+
+            this.disablePlugin();
+
+            return;
+        }
+
+        ClassLoader previous = Thread.currentThread().getContextClassLoader();
+
+        Thread.currentThread().setContextClassLoader(getClassLoader());
+        ebean = EbeanServerFactory.create(dbConfig);
+        Thread.currentThread().setContextClassLoader(previous);
+    }
+
+    /**
+     * Called when this plugin is enabled
+     */
     @Override
     public void onEnable() {
-        instance = this;
-
         try {
             // just call DAO once to ensure it's loaded before startup is complete
             dao = getDAO();
@@ -114,7 +136,11 @@ public class Gringotts extends JavaPlugin {
             accounting = new Accounting();
 
             eco = new GringottsEco();
-            registerCommands();
+
+            if (!registerCommands()) {
+                return;
+            }
+
             registerEvents();
             registerEconomy();
 
@@ -194,49 +220,106 @@ public class Gringotts extends JavaPlugin {
             }, 1, 20 * 60 * 5);
         } catch (GringottsStorageException | GringottsConfigurationException e) {
             getLogger().severe(e.getMessage());
-            this.disable();
+            this.disablePlugin();
+
         } catch (RuntimeException e) {
-            this.disable();
+            this.disablePlugin();
+
             throw e;
         }
-
 
         getLogger().fine("enabled");
     }
 
-    private void disable() {
+    /**
+     * Disable plugin.
+     */
+    private void disablePlugin() {
         Bukkit.getPluginManager().disablePlugin(this);
+
         getLogger().warning("Gringotts disabled due to startup errors.");
     }
 
+    /**
+     * Called when this plugin is disabled
+     */
     @Override
     public void onDisable() {
-
         // shut down db connection
         try {
             if (dao != null) {
                 dao.shutdown();
             }
         } catch (GringottsStorageException e) {
-            getLogger().severe(e.toString());
+            getLogger().throwing(getClass().getCanonicalName(), "onDisable", e);
         }
-
-        getLogger().info("disabled");
     }
 
-    private void registerCommands() {
-        MoneyExecutor playerCommands = new MoneyExecutor();
-        MoneyadminExecutor moneyAdminCommands = new MoneyadminExecutor();
-        GringottsExecutor adminCommands = new GringottsExecutor();
+    private boolean registerCommands() {
+        MoneyExecutor moneyExecutor = new MoneyExecutor();
 
-        getCommand("balance").setExecutor(playerCommands);
-        getCommand("money").setExecutor(playerCommands);
+        PluginCommand balanceCommand = getCommand("balance");
 
-        PluginCommand moneyadminCommand = getCommand("moneyadmin");
-        moneyadminCommand.setExecutor(moneyAdminCommands);
-        moneyadminCommand.setTabCompleter(moneyAdminCommands);
+        if (balanceCommand != null) {
+            balanceCommand.setExecutor(moneyExecutor);
+            balanceCommand.setTabCompleter(moneyExecutor);
+        }
 
-        getCommand("gringotts").setExecutor(adminCommands);
+        PluginCommand moneyCommand = getCommand("money");
+
+        if (moneyCommand != null) {
+            moneyCommand.setExecutor(moneyExecutor);
+            moneyCommand.setTabCompleter(moneyExecutor);
+        }
+
+        if (balanceCommand == null && moneyCommand == null) {
+            getLogger().warning(
+                    "Something got wrong on command registration. " +
+                            "Looks like both of the money commands <money, balance> are missing."
+            );
+
+            this.disablePlugin();
+
+            return false;
+        }
+
+        PluginCommand moneyAdminCommand = getCommand("moneyadmin");
+
+        if (moneyAdminCommand != null) {
+            MoneyadminExecutor moneyAdminCommands = new MoneyadminExecutor();
+
+            moneyAdminCommand.setExecutor(moneyAdminCommands);
+            moneyAdminCommand.setTabCompleter(moneyAdminCommands);
+        } else {
+            getLogger().warning(
+                    "Something got wrong on command registration. " +
+                            "Looks like command <moneyadmin> is missing."
+            );
+
+            this.disablePlugin();
+
+            return false;
+        }
+
+        PluginCommand gringottsCommand = getCommand("gringotts");
+
+        if (gringottsCommand != null) {
+            GringottsExecutor adminCommands = new GringottsExecutor();
+
+            gringottsCommand.setExecutor(adminCommands);
+            gringottsCommand.setTabCompleter(adminCommands);
+        } else {
+            getLogger().warning(
+                    "Something got wrong on command registration. " +
+                            "Looks like command <gringotts> is missing."
+            );
+
+            this.disablePlugin();
+
+            return false;
+        }
+
+        return true;
     }
 
     private void registerEvents() {
@@ -256,6 +339,7 @@ public class Gringotts extends JavaPlugin {
     private void registerEconomy() {
         if (DEP.vault.exists()) {
             getServer().getServicesManager().register(Economy.class, new VaultConnector(), this, ServicePriority.Highest);
+
             getLogger().info("Registered Vault interface.");
         } else {
             getLogger().info("Vault not found. Other plugins may not be able to access Gringotts accounts.");
@@ -288,7 +372,7 @@ public class Gringotts extends JavaPlugin {
         InputStream langStream = getResource(langPath);
         final FileConfiguration conf;
         if (langStream != null) {
-            Reader langReader = new InputStreamReader(getResource(langPath), Charset.forName("UTF-8"));
+            Reader langReader = new InputStreamReader(Objects.requireNonNull(getResource(langPath)), Charset.forName("UTF-8"));
             conf = YamlConfiguration.loadConfiguration(langReader);
         } else {
             // use custom/default
@@ -303,6 +387,7 @@ public class Gringotts extends JavaPlugin {
     @Override
     public void reloadConfig() {
         super.reloadConfig();
+
         CONF.readConfig(getConfig());
         LANG.readLanguage(getMessages());
     }
@@ -328,12 +413,15 @@ public class Gringotts extends JavaPlugin {
         DerbyDAO derbyDAO;
         if (!migration.isDerbyMigrated() && (derbyDAO = DerbyDAO.getDao()) != null) {
             getLogger().info("Derby database detected. Migrating to Bukkit-supported database ...");
+
             EBeanDAO eBeanDAO = EBeanDAO.getDao();
+
             migration.doDerbyMigration(derbyDAO, eBeanDAO);
         }
 
         if (!migration.isUUIDMigrated()) {
             getLogger().info("Player database not migrated to UUIDs yet. Attempting migration");
+
             migration.doUUIDMigration();
         }
 
@@ -345,7 +433,7 @@ public class Gringotts extends JavaPlugin {
      *
      * @return the database classes
      */
-    public List<Class<?>> getDatabaseClasses() {
+    private List<Class<?>> getDatabaseClasses() {
         return EBeanDAO.getDatabaseClasses();
     }
 
@@ -387,22 +475,22 @@ public class Gringotts extends JavaPlugin {
     /**
      * Install ddl.
      */
-    protected void installDDL() {
+    private void installDDL() {
         SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
         DdlGenerator gen = serv.getDdlGenerator();
 
         gen.runScript(false, gen.generateCreateDdl());
     }
 
-    /**
-     * Remove ddl.
-     */
-    protected void removeDDL() {
-        SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
-        DdlGenerator gen = serv.getDdlGenerator();
-
-        gen.runScript(true, gen.generateDropDdl());
-    }
+//    /**
+//     * Remove ddl.
+//     */
+//    protected void removeDDL() {
+//        SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
+//        DdlGenerator gen = serv.getDdlGenerator();
+//
+//        gen.runScript(true, gen.generateDropDdl());
+//    }
 
     private String replaceDatabaseString(String input) {
         input = input.replaceAll(
@@ -420,7 +508,7 @@ public class Gringotts extends JavaPlugin {
      *
      * @param config the config
      */
-    public void configureDbConfig(ServerConfig config) {
+    private void configureDbConfig(ServerConfig config) {
         Validate.notNull(config, "Config cannot be null");
 
         DataSourceConfig ds = new DataSourceConfig();

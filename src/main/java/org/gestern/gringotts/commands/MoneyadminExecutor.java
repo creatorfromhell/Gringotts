@@ -4,13 +4,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.gestern.gringotts.Gringotts;
 import org.gestern.gringotts.GringottsAccount;
 import org.gestern.gringotts.accountholder.AccountHolder;
 import org.gestern.gringotts.api.Account;
 import org.gestern.gringotts.api.TransactionResult;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,7 +23,10 @@ import static org.gestern.gringotts.api.TransactionResult.SUCCESS;
 /**
  * Admin commands for managing ingame aspects.
  */
-public class MoneyadminExecutor extends GringottsAbstractExecutor implements TabCompleter {
+public class MoneyadminExecutor extends GringottsAbstractExecutor {
+    /**
+     * Registered commands.
+     */
     private static final List<String> commands = Arrays.asList(
             "economy",
             "eco",
@@ -34,10 +37,26 @@ public class MoneyadminExecutor extends GringottsAbstractExecutor implements Tab
             "m",
             "add",
             "remove",
-            "rm");
+            "rm"
+    );
 
+    /**
+     * Executes the given command, returning its success.
+     * <br>
+     * If false is returned, then the "usage" plugin.yml entry for this command
+     * (if defined) will be sent to the player.
+     *
+     * @param sender       Source of the command
+     * @param cmd          Command which was executed
+     * @param commandLabel Alias of the command which was used
+     * @param args         Passed command arguments
+     * @return true if a valid command, otherwise false
+     */
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender,
+                             @NotNull Command cmd,
+                             @NotNull String commandLabel,
+                             @NotNull String[] args) {
         if (args.length == 0) {
             return false;
         }
@@ -199,11 +218,14 @@ public class MoneyadminExecutor extends GringottsAbstractExecutor implements Tab
      * to default to the command executor
      */
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender,
+                                      @NotNull Command command,
+                                      @NotNull String alias,
+                                      @NotNull String[] args) {
         if (args.length == 1) {
             return commands.stream().filter(cmd -> cmd.startsWith(args[0])).collect(Collectors.toList());
         } else if (args.length == 2) {
-            String cmd = args[0];
+            String cmd = args[0].toLowerCase();
 
             switch (cmd) {
                 case "add":
@@ -216,7 +238,7 @@ public class MoneyadminExecutor extends GringottsAbstractExecutor implements Tab
                     return Bukkit.getOnlinePlayers()
                             .stream()
                             .map(Player::getName)
-                            .filter(name -> cmd.startsWith(args[0]))
+                            .filter(name -> name.startsWith(args[1]))
                             .collect(Collectors.toList());
                 }
             }

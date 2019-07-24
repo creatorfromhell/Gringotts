@@ -74,6 +74,10 @@
                             <pattern>org.bstats</pattern>
                             <shadedPattern>org.gestern.gringotts</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>io.papermc.lib</pattern>
+                            <shadedPattern>org.gestern.gringotts.paperlib</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>
@@ -141,6 +145,10 @@
         <repository>
             <id>znode</id>
             <url>http://repo.zno.de/artifactory/repo/</url>
+        </repository>
+        <repository>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
             <id>project.local</id>
@@ -226,6 +234,18 @@
             <artifactId>bukkit-migration-tools</artifactId>
             <version>0.1</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>17.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.papermc</groupId>
+            <artifactId>paperlib</artifactId>
+            <version>1.0.2</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
